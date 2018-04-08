@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="./style.css">
+  <title>Chatter / Tech / Swift</title>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <ul id="messages"></ul>
+    </div>
+    <div class="row">
+      <form action="">
+        <div class="col-lg-12">
+            <div class="input-group">
+                <input id="m" type="text" class="form-control" autocomplete="off" placeholder="Message..." aria-label="Message..." aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary" type="submit">Send</button>
+                </div>
+            </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const room = 'swift';
+    const socket = io('/tech');
+    $('form').submit(() => {
+      let msg = $('#m').val()
+      socket.emit('message', { msg, room })
+      $('#m').val('');
+      return false;
+    });
+
+    socket.on('connect', () => {
+      // emmitting to everybody
+      socket.emit('join', { room: room });
+    });
+
+    socket.on('message', (msg) => {
+      $('#messages').append($('<li>').text(msg))
+    });
+  </script>
+</body>
+</html>
